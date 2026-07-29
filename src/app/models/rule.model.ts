@@ -39,10 +39,16 @@ export interface Rule {
   layer: RuleLayer;
   priority: number;
   ghostMode: boolean;
+  isGhostMode?: boolean; // REST API Contract alias
   active: boolean;
   clauses: RuleClause[];
   createdAt: string;
   updatedAt: string;
+  // CMN 4.966 & LGPD Audit Metadata
+  createdBy?: string;
+  approvedBy?: string;
+  prdOrigin?: string;
+  auditTimestamp?: string; // ISO 8601 UTC format
 }
 
 export interface TransactionSimulation {
@@ -57,7 +63,31 @@ export interface TransactionSimulation {
   customerEmail: string;
   attempts24h: number;
   riskScore: number;
+  deviceFingerprintSeenInOtherAccount?: string;
+  geoLocDivergent?: string;
 }
+
+export interface RetrospectiveImpactResult {
+  totalAnalyzed: number;
+  impactedOrders: number;
+  impactedPercent: number;
+  estimatedFraudSavings: number;
+  falsePositiveRate: string;
+  executionTimeMs: number;
+  isCached?: boolean;
+  matrix: {
+    action: RuleAction;
+    actionLabel: string;
+    currentVolume: number;
+    currentPercent: number;
+    proposedVolume: number;
+    proposedPercent: number;
+    deltaVolume: number;
+    deltaPercent: number;
+  }[];
+  executiveInsight: string;
+}
+
 
 export interface RuleMatchResult {
   rule: Rule;

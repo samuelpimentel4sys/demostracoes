@@ -89,8 +89,25 @@ import { PaymentMethod, TransactionSimulation, SimulationResult } from '../../mo
                   <label>Score de Risco AI (0-100)</label>
                   <input type="number" class="form-control" [(ngModel)]="riskScore" (input)="runSimulation()" placeholder="85" />
                 </div>
+
+                <div class="form-group">
+                  <label>Device Fingerprint em Outra Conta</label>
+                  <select class="form-control" [(ngModel)]="deviceFingerprintSeenInOtherAccount" (change)="runSimulation()">
+                    <option value="SIM">SIM (Visto em conta diferente)</option>
+                    <option value="NÃO">NÃO (Apenas nesta conta)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Geolocalização Divergente</label>
+                  <select class="form-control" [(ngModel)]="geoLocDivergent" (change)="runSimulation()">
+                    <option value="SIM">SIM (Diverge do histórico)</option>
+                    <option value="NÃO">NÃO (Dentro do padrão habitual)</option>
+                  </select>
+                </div>
               </div>
             </div>
+
 
             <!-- Right Panel: Simulation Evaluation Results -->
             <div class="results-panel">
@@ -203,6 +220,9 @@ export class SimulatorComponent {
   customerEmail = 'compra.suspeita@tempmail.com';
   attempts24h = 4;
   riskScore = 85;
+  deviceFingerprintSeenInOtherAccount = 'SIM';
+  geoLocDivergent = 'SIM';
+
 
   readonly result = signal<SimulationResult>({
     finalDecision: 'NEUTRAL',
@@ -227,8 +247,11 @@ export class SimulatorComponent {
       sameCountryDelivery: this.sameCountryDelivery,
       customerEmail: this.customerEmail || '',
       attempts24h: Number(this.attempts24h) || 0,
-      riskScore: Number(this.riskScore) || 0
+      riskScore: Number(this.riskScore) || 0,
+      deviceFingerprintSeenInOtherAccount: this.deviceFingerprintSeenInOtherAccount,
+      geoLocDivergent: this.geoLocDivergent
     };
+
 
     const simRes = this.ruleService.evaluateTransaction(transaction);
     this.result.set(simRes);
@@ -246,7 +269,10 @@ export class SimulatorComponent {
     this.customerEmail = 'cliente.normal@gmail.com';
     this.attempts24h = 1;
     this.riskScore = 15;
+    this.deviceFingerprintSeenInOtherAccount = 'NÃO';
+    this.geoLocDivergent = 'NÃO';
     this.runSimulation();
+
   }
 
   close() {
